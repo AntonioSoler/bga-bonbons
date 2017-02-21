@@ -99,20 +99,31 @@ $machinestates = array(
         "description" => clienttranslate('a player has flipped a round tile'),
 		"action" => "stprocessRound",
         "updateGameProgression" => true,
-        "transitions" => array("flipSquare" => 2, , "gameEnd" => 99 ) 
+        "transitions" => array("flipSquare" => 2, "swapRound" => 7 , "gameEnd" => 99 ) 
     ),
 	
 	6 => array(
         "name" => "buyRound", 
-        "type" => "game",
-        "description" => clienttranslate('${actplayer} found 3 money tiles and can turn round tile'),
-		"descriptionmyturn" => clienttranslate('${you} found 3 money tiles and you can turn round tile'),
+        "description" => clienttranslate('${actplayer} found 3 money tiles and can turn a round tile'),
+		"descriptionmyturn" => clienttranslate('${you} found 3 money tiles and you can turn a round tile'),
 		"type" => "activeplayer",
-		"action" => "stflipRound",
+		"action" => "stbuyround",
 		"possibleactions" => array( "buyround" )
 		"updateGameProgression" => true,
-        "transitions" => array("processRound" => 5) 
+        "transitions" => array("flipSquare" => 2) 
     ),
+	
+	6 => array(
+        "name" => "swapRound", 
+        "description" => clienttranslate('${actplayer} found another player couple and now has to give one of his round tiles in exchange'),
+		"descriptionmyturn" => clienttranslate('${you} found another player couple and now has to give one of his round tiles in exchange'),
+		"type" => "activeplayer",
+		"action" => "stswapRound",
+		"possibleactions" => array( "swapRound" )
+		"updateGameProgression" => true,
+        "transitions" => array("flipSquare" => 2) 
+    ),
+	
 /*
     Examples:
     

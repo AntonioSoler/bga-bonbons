@@ -33,12 +33,19 @@ class bonbons extends Table
         //  the corresponding ID in gameoptions.inc.php.
         // Note: afterwards, you can get/set the global variables with getGameStateValue/setGameStateInitialValue/setGameStateValue
         parent::__construct();self::initGameStateLabels( array( 
-            //    "my_first_global_variable" => 10,
+               "moneytiles" => 10,
+			   
             //    "my_second_global_variable" => 11,
             //      ...
             //    "my_first_game_variant" => 100,
             //    "my_second_game_variant" => 101,
             //      ...
+		
+		$this->squares = self::getNew( "module.common.deck" );
+		$this->squares->init( "squares" );
+		$this->rounds = self::getNew( "module.common.deck" );
+		$this->rounds->init( "rounds" );
+			
         ) );
         
 	}
@@ -89,7 +96,42 @@ class bonbons extends Table
 
         // TODO: setup the initial game situation here
        
-
+	   self::setGameStateInitialValue( 'moneytiles', 0 )
+	   $rounds = array();
+       $squares = array();
+	   foreach( $this->card_types as $cardType)
+        {
+			if ($cardType['type_id']  <= 1)   //only candies
+            {
+                $type_id = $cardType["type_id"]-1 ;
+				$card = array( 'type' => $cardType["type_id"], 'type_arg' => 0 , 'nbr' => 32);
+				array_push($squares, $card);
+				array_push($rounds, $card);
+            }
+            else if ($cardType['type_id'] == 2)  //money tiles only on squares
+            {	
+                $type_id = $cardType["type_id"]-1 ;
+				$card = array( 'type' => $cardType["type_id"], 'type_arg' => 0 , 'nbr' => 3);
+				array_push($squares, $card);	
+            }
+			else if ($cardType['type_id'] == 3)  // empty package
+            {	
+                $type_id = $cardType["type_id"]-1 ;
+				$card = array( 'type' => $cardType["type_id"], 'type_arg' => 0 , 'nbr' => 1);
+				array_push($squares, $card);	
+            }
+			
+	   
+	   $this->squares->createCards( $squares, 'hidden' );
+	   $this->squares->shuffle( 'hidden' );
+	   $this->rounds->createCards( $rounds, 'hidden' );
+	   $this->rounds->shuffle( 'hidden' );
+	   
+	   
+	  
+//pick round tiles for players	   
+	   
+	   
         // Activate first player (which is in general a good idea :) )
         $this->activeNextPlayer();
 

@@ -62,7 +62,45 @@
     }
     
     */
-
+     
+	 public function selectSquare()
+    {
+		self::setAjaxMode();
+		$arg1 = self::getArg( "tile", AT_posint, true );
+		$this->game->selectSquare($arg1);
+		self::ajaxResponse();    
+	}
+	
+	 public function selectRound()
+    {
+		self::setAjaxMode();
+		$arg1 = self::getArg( "tile", AT_posint, true );
+		$this->game->selectRound($arg1);
+		self::ajaxResponse();    
+	}
+	
+	 public function buyRound()
+    {
+		self::setAjaxMode();
+		$arg1 = self::getArg( "tile", AT_posint, true );
+		$this->game->buyRound($arg1);
+		self::ajaxResponse();    
+	}
+	
+	 public function swapRound()
+    {
+		self::setAjaxMode();
+		$arg1 = self::getArg( "tile", AT_posint, true );
+		$this->game->swapRound($arg1);
+		self::ajaxResponse();    
+	}
+	
+	 public function pass()
+    {
+		self::setAjaxMode();
+		$this->game->pass();
+		self::ajaxResponse();    
+	}
+	
   }
   
-
