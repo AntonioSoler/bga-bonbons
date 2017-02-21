@@ -3,7 +3,7 @@
 <!-- 
 --------
 -- BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
--- bonbons implementation : © <Your name here> <Your email address here>
+-- bonbons implementation : © Antonio Soler morgalad.es@gmail.com
 -- 
 -- This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
 -- See http://en.boardgamearena.com/#!doc/Studio for more information.
@@ -24,11 +24,75 @@
     
     Please REMOVE this comment before publishing your game on BGA
 -->
+<div id="playarea">
+  <div id="tablearea">
+	<table class="boardtable">
+		<tbody>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		</tbody>
+	</table>
+</div>
 
-
-This is your game interface. You can edit this HTML in your ".tpl" file.
-
-
+	<div id="fieldswrapper">
+				<!-- BEGIN playerfield -->
+				<div id="playerField_{PLAYER_ID}" class="playerfield">
+						<p style="color:#{PLAYER_COLOR}; text-align: center ;"  >{PLAYER_NAME}</p>
+						<div id="tile_1_{PLAYER_ID}" class="playertile"></div>
+						<div id="tile_2_{PLAYER_ID}" class="playertile"></div>
+						<div id="tile_3_{PLAYER_ID}" class="playertile animatedtile"></div>
+						<div id="tile_4_{PLAYER_ID}" class="playertile"></div>
+						
+				</div>
+			<!-- END playerfield -->
+	</div>
+</div>
 <script type="text/javascript">
 
 // Javascript HTML templates

@@ -1,7 +1,7 @@
 /**
  *------
  * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
- * bonbons implementation : © <Your name here> <Your email address here>
+ * bonbons implementation : © Antonio Soler morgalad.es@gmail.com
  *
  * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
  * See http://en.boardgamearena.com/#!doc/Studio for more information.
@@ -64,7 +64,104 @@
         background-repeat: none;
     }
 */
+body {
+    // background-image: url("img/background.png");
+	 background-color:#fdf3f7;
+}
+
+#playarea {
+ text-align: center;
+ margin: initial;
+ }
+
+#tablearea {
+ margin: 20px;
+ text-align: center;
+ ma
+ display: inline-block;
+ display: inline-block;
+ background-color: #e290b3;
+ }
+ 
+#fieldswrapper {
+  margin: auto;
+  text-align: center;
+  display: inline-block;
+  }
+
+	.boardtable {
+	    margin: 30px ;
+		width:606px;
+		height:606px;
+		border:8px #cf5798;
+		border-style: solid ;
+		border-collapse:separate;
+		border-spacing:0px;
+		padding:1px;
+		box-shadow:
+  0 0 0 2px #76a092,
+  0 0 0 5px #fdf3f7,
+  0 0 0 15px #76a092,
+  0 0 0 18px #fdf3f7,
+  0 0 0 20px #76a092;
+	}
+	.boardtable tbody {
+		border:8px  #fdf3f7;
+		padding:1px;
+	}
+	.boardtable td {
+		border:1px solid #76a092;
+		text-align:center;
+		padding:1px;
+		width:100px;
+		height:100px;
+		background-image: url('img/squareback.png');
+		background-repeat: no-repeat;
+		background-position: center center; 
+		background-size: 100% 100%;
+		}
 
 
+.playertile {
+	margin: 2px;
+	display: inline-block;
+	border:2px solid #645b5e;
+	height: 100px;
+	width: 100px;
+	padding:1px;
+	border-radius: 50%;
+	background-image: url('img/roundback.png');
+	background-repeat: no-repeat;
+	background-position: center center;
+	background-size: 100% 100%;
+	}
+	
+.playerfield {
+    padding: 10px;
+    margin: 5px;
+    height: 160px;
+    width: 580px;
+    background-image: url('img/border.png');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 98% 96%;
+    background-color: #76a092;
+}
 
+.animatedtile{	
+	animation: flip 4s linear infinite alternate ;
+	-webkit-animation: flip 4s linear infinite alternate ;
+}
 
+@keyframes flip {
+    
+    50%  {background-image: url('img/roundback.png');
+	-ms-transform: scale(0.01, 1); /* IE 9 */
+    -webkit-transform: scale(0.01, 1); /* Safari */
+    transform: scale(0.01, 1);}
+    51%  {background-image: url('img/testtile.png');}
+    100%  {background-image: url('img/testtile.png');
+	-ms-transform: scale(1, 1); /* IE 9 */
+    -webkit-transform: scale(1, 1); /* Safari */
+    transform: scale(1, 1);}
+}

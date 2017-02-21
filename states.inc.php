@@ -2,7 +2,7 @@
 /**
  *------
  * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
- * bonbons implementation : © <Your name here> <Your email address here>
+ * bonbons implementation : © Antonio Soler morgalad.es@gmail.com
  *
  * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
  * See http://en.boardgamearena.com/#!doc/Studio for more information.
@@ -64,14 +64,55 @@ $machinestates = array(
     // Note: ID=2 => your first state
 
     2 => array(
-    		"name" => "playerTurn",
-    		"description" => clienttranslate('${actplayer} must play a card or pass'),
-    		"descriptionmyturn" => clienttranslate('${you} must play a card or pass'),
+    		"name" => "flipSquare",
+    		"description" => clienttranslate('${actplayer} must flip a square tile'),
+    		"descriptionmyturn" => clienttranslate('${you} must flip a square tile'),
     		"type" => "activeplayer",
-    		"possibleactions" => array( "playCard", "pass" ),
-    		"transitions" => array( "playCard" => 2, "pass" => 2 )
+    		"action" => "stflipSquare",
+			"possibleactions" => array( "selectSquare" ),
+			"updateGameProgression" => true,
+    		"transitions" => array( "processSquare" => 3)
     ),
     
+	3 => array(
+        "name" => "processSquare", 
+        "type" => "game",
+        "description" => clienttranslate('a player has flipped a square tile'),
+		"action" => "stprocessSquare",
+        "updateGameProgression" => true,
+        "transitions" => array("flipSquare" => 2, "flipRound" => 4, "buyRound" => 5) 
+    ),
+	
+	4 => array(
+    		"name" => "flipRound",
+    		"description" => clienttranslate('${actplayer} can flip a round tile or pass'),
+    		"descriptionmyturn" => clienttranslate('${you} car flip a round tile or pass'),
+    		"type" => "activeplayer",
+    		"action" => "stflipRound",
+			"possibleactions" => array( "selectRound", "pass" )
+			"updateGameProgression" => true,
+    		"transitions" => array( "processRound" => 5, "processSquare" => 2 )
+    ),
+    5 => array(
+        "name" => "processRound", 
+        "type" => "game",
+        "description" => clienttranslate('a player has flipped a round tile'),
+		"action" => "stprocessRound",
+        "updateGameProgression" => true,
+        "transitions" => array("flipSquare" => 2, , "gameEnd" => 99 ) 
+    ),
+	
+	6 => array(
+        "name" => "buyRound", 
+        "type" => "game",
+        "description" => clienttranslate('${actplayer} found 3 money tiles and can turn round tile'),
+		"descriptionmyturn" => clienttranslate('${you} found 3 money tiles and you can turn round tile'),
+		"type" => "activeplayer",
+		"action" => "stflipRound",
+		"possibleactions" => array( "buyround" )
+		"updateGameProgression" => true,
+        "transitions" => array("processRound" => 5) 
+    ),
 /*
     Examples:
     

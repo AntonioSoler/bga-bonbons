@@ -2,7 +2,7 @@
 /**
  *------
  * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
- * bonbons implementation : © <Your name here> <Your email address here>
+ * bonbons implementation : © Antonio Soler morgalad.es@gmail.com
  *
  * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
  * See http://en.boardgamearena.com/#!doc/Studio for more information.
@@ -76,6 +76,15 @@
         
         */
 
+		$this->page->begin_block( "bonbons_bonbons", "playerfield" );
+     	foreach( $players as $player )	{
+           
+
+            $this->page->insert_block( "playerfield", array( "PLAYER_ID" => $player['player_id'],
+			                                            "PLAYER_NAME" => $player['player_name'],
+														"PLAYER_COLOR" => $player['player_color']
+                                                      ));
+		}
 
 
         /*********** Do not change anything below this line  ************/

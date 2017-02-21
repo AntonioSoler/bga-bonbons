@@ -2,7 +2,7 @@
 /**
  *------
  * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
- * bonbons implementation : © <Your name here> <Your email address here>
+ * bonbons implementation : © Antonio Soler morgalad.es@gmail.com
  * 
  * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
  * See http://en.boardgamearena.com/#!doc/Studio for more information.
@@ -19,7 +19,22 @@
  *
  */
 
+ $this->resources = array(
+    "bonbons"     => clienttranslate('Bonbons'),
+    "money"   => clienttranslate('Money'),
+    "empty"     => clienttranslate('Empty package'),
+);
 
+ //
+ 
+ $this->card_types = array(
+	1  => array( 'name' => $this->resources["bonbons" ], 'type_id' =>  1),
+	2  => array( 'name' => $this->resources["money"   ], 'type_id' =>  2),
+	3  => array( 'name' => $this->resources["empty"   ], 'type_id' =>  3)
+	);
+
+ 
+ 
 /*
 
 Example:
