@@ -27,7 +27,11 @@
 <div id="playarea">
 
 <div id="tablearea" class="boardtable">
-		
+		<!-- BEGIN tablearea -->
+		<div id="stile_{POSITION}" class="squaretile">
+			<div class="squaretile--front"></div><div id="stile_back_{POSITION}" class="squaretile--back"></div>
+		</div>
+		<!-- END tablearea -->
 </div>
 
 	<div id="fieldswrapper">

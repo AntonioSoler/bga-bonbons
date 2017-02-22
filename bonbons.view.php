@@ -75,10 +75,14 @@
         }
         
         */
-
+        $this->page->begin_block( "bonbons_bonbons", "tablearea" );
+		for( $position=1 ; $position <=36 ; $position++ )	
+		{
+			$this->page->insert_block( "tablearea", array( "POSITION" => $position ));
+		}
+			
 		$this->page->begin_block( "bonbons_bonbons", "playerfield" );
      	foreach( $players as $player )	{
-           
 
             $this->page->insert_block( "playerfield", array( "PLAYER_ID" => $player['player_id'],
 			                                            "PLAYER_NAME" => $player['player_name'],

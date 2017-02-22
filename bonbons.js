@@ -61,11 +61,11 @@ function (dojo, declare) {
             
             // TODO: Set up your game interface here, according to "gamedatas"
             
-			this.squaretiles = new ebg.stock();
+			/*this.squaretiles = new ebg.stock();
             this.squaretiles.create( this, $('tablearea'), this.cardwidth, this.cardheight );
             this.squaretiles.image_items_per_row = 4;
 			this.squaretiles.setSelectionMode( 1 );
-			this.myStockControl.item_margin=3,
+			this.squaretiles.item_margin=3;
 			
 			for(  i=1;i<=36;i++ )
             {
@@ -73,12 +73,16 @@ function (dojo, declare) {
             this.squaretiles.addItemType( i, 1, g_gamethemeurl+'img/tiles.jpg', i-1 );			
             this.squaretiles.addItemType( 100+i, i, g_gamethemeurl+'img/tiles.jpg', 34 );
             this.squaretiles.addToStockWithId( 100+i , i , 'player_boards');  
-            }
- 
+            }*/
+			
             // Setup game notifications to handle (see "setupNotifications" method below)
             this.setupNotifications();
 			
 			dojo.query('.roundtile').onclick( function(evt) { 
+			dojo.toggleClass(this, 'flipped');
+			});
+			
+			dojo.query('.squaretile').onclick( function(evt) { 
 			dojo.toggleClass(this, 'flipped');
 			});
 
