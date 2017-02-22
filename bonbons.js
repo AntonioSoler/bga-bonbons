@@ -18,6 +18,7 @@
 define([
     "dojo","dojo/_base/declare",
     "ebg/core/gamegui",
+	"ebg/stock",
     "ebg/counter"
 ],
 function (dojo, declare) {
@@ -28,6 +29,8 @@ function (dojo, declare) {
             // Here, you can init the global variables of your user interface
             // Example:
             // this.myGlobalValue = 0;
+			this.cardwidth = 100;
+            this.cardheight = 100;
 
         },
         
@@ -58,9 +61,26 @@ function (dojo, declare) {
             
             // TODO: Set up your game interface here, according to "gamedatas"
             
+			this.squaretiles = new ebg.stock();
+            this.squaretiles.create( this, $('tablearea'), this.cardwidth, this.cardheight );
+            this.squaretiles.image_items_per_row = 4;
+			this.squaretiles.setSelectionMode( 1 );
+			this.myStockControl.item_margin=3,
+			
+			for(  i=1;i<=36;i++ )
+            {
+            
+            this.squaretiles.addItemType( i, 1, g_gamethemeurl+'img/tiles.jpg', i-1 );			
+            this.squaretiles.addItemType( 100+i, i, g_gamethemeurl+'img/tiles.jpg', 34 );
+            this.squaretiles.addToStockWithId( 100+i , i , 'player_boards');  
+            }
  
             // Setup game notifications to handle (see "setupNotifications" method below)
             this.setupNotifications();
+			
+			dojo.query('.roundtile').onclick( function(evt) { 
+			dojo.toggleClass(this, 'flipped');
+			});
 
             console.log( "Ending game setup" );
         },

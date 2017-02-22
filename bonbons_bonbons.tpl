@@ -25,69 +25,27 @@
     Please REMOVE this comment before publishing your game on BGA
 -->
 <div id="playarea">
-  <div id="tablearea">
-	<table class="boardtable">
-		<tbody>
-		<tr>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-		</tr>
-		<tr>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-		</tr>
-		<tr>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-		</tr>
-		<tr>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-		</tr>
-		<tr>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-		</tr>
-		<tr>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-		</tr>
-		</tbody>
-	</table>
+
+<div id="tablearea" class="boardtable">
+		
 </div>
 
 	<div id="fieldswrapper">
 				<!-- BEGIN playerfield -->
 				<div id="playerField_{PLAYER_ID}" class="playerfield">
 						<p style="color:#{PLAYER_COLOR}; text-align: center ;"  >{PLAYER_NAME}</p>
-						<div id="tile_1_{PLAYER_ID}" class="playertile"></div>
-						<div id="tile_2_{PLAYER_ID}" class="playertile"></div>
-						<div id="tile_3_{PLAYER_ID}" class="playertile animatedtile"></div>
-						<div id="tile_4_{PLAYER_ID}" class="playertile"></div>
+						<div id="tile_1_{PLAYER_ID}" class="roundtile">
+							<div class="roundtile--front"></div><div class="roundtile--back"></div>
+						</div>
+						<div id="tile_2_{PLAYER_ID}" class="roundtile">
+							<div class="roundtile--front"></div><div class="roundtile--back"></div>
+						</div>
+						<div id="tile_3_{PLAYER_ID}" class="roundtile">
+							<div class="roundtile--front"></div><div class="roundtile--back"></div>
+						</div>
+						<div id="tile_4_{PLAYER_ID}" class="roundtile">
+							<div class="roundtile--front"></div><div class="roundtile--back"></div>
+						</div>
 						
 				</div>
 			<!-- END playerfield -->

@@ -97,41 +97,47 @@ class bonbons extends Table
 	   
 	   $rounds = array();
        $squares = array();
-	   foreach( $this->card_types as $cardType)
+	   
+	   
+	   for ($i = 1; $i <= 34; $i++)
         {
-			if ($cardType['type_id']  <= 1)   //only candies
+			if ($i  <= 32)   // candies
             {
-                $type_id = $cardType["type_id"]-1 ;
-				$card = array( 'type' => $cardType["type_id"], 'type_arg' => 0 , 'nbr' => 32);
+                
+				$card = array( 'type' => $i , 'type_arg' => 0 , 'nbr' => 1);
 				array_push($squares, $card);
 				array_push($rounds, $card);
             }
-            else if ($cardType['type_id'] == 2)  //money tiles only on squares
+            else if ($i == 33)  //money tiles only on squares
             {	
-                $type_id = $cardType["type_id"]-1 ;
-				$card = array( 'type' => $cardType["type_id"], 'type_arg' => 0 , 'nbr' => 3);
+                
+				$card = array( 'type' => $i, 'type_arg' => 1 , 'nbr' => 3);
 				array_push($squares, $card);	
             }
-			else if ($cardType['type_id'] == 3)  // empty package
+			else if ($i == 34)  // empty package only on squares
             {	
-                $type_id = $cardType["type_id"]-1 ;
-				$card = array( 'type' => $cardType["type_id"], 'type_arg' => 0 , 'nbr' => 1);
+                
+				$card = array( 'type' => $i, 'type_arg' => 1 , 'nbr' => 1);
 				array_push($squares, $card);	
             }
 			
 	    }
-	   $this->squares->createCards( $squares, 'hidden' );
-	   $this->squares->shuffle( 'hidden' );
-	   $this->rounds->createCards( $rounds, 'hidden' );
-	   $this->rounds->shuffle( 'hidden' );
+		$this->squares->createCards( $squares, 'hidden' );
+		$this->squares->shuffle( 'hidden' );
+		$this->rounds->createCards( $rounds, 'hidden' );
+		$this->rounds->shuffle( 'hidden' );
 	   
-	   
-	  
-//pick round tiles for players	   
-	   
-	   
-        // Activate first player (which is in general a good idea :) )
-     $this->activeNextPlayer();
+													//pick round tiles for players	   
+		foreach( $players as $player_id => $player )
+		{
+			for ($i = 1; $i <= 4; $i++)
+			{
+				$this->rounds->pickCardForLocation( 'hidden', "visible".$player_id , $i ); //  Draw a card
+			}
+		}
+	    // Activate first player (which is in general a good idea :) )
+		
+		$this->activeNextPlayer();
 
         /************ End of the game initialization *****/
     }

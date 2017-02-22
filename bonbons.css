@@ -90,10 +90,10 @@ body {
   }
 
 	.boardtable {
-	    margin: 30px ;
-		width:606px;
-		height:606px;
-		border:8px #cf5798;
+	    
+		width:623px;
+		height:623px;
+		border:2px #cf5798;
 		border-style: solid ;
 		border-collapse:separate;
 		border-spacing:0px;
@@ -121,21 +121,6 @@ body {
 		background-size: 100% 100%;
 		}
 
-
-.playertile {
-	margin: 2px;
-	display: inline-block;
-	border:2px solid #645b5e;
-	height: 100px;
-	width: 100px;
-	padding:1px;
-	border-radius: 50%;
-	background-image: url('img/roundback.png');
-	background-repeat: no-repeat;
-	background-position: center center;
-	background-size: 100% 100%;
-	}
-	
 .playerfield {
     padding: 10px;
     margin: 5px;
@@ -148,20 +133,78 @@ body {
     background-color: #76a092;
 }
 
-.animatedtile{	
-	animation: flip 4s linear infinite alternate ;
-	-webkit-animation: flip 4s linear infinite alternate ;
+.roundtile {
+	perspective: 1200px;
+	position: relative;
+	margin: 2px;
+	top:0px;
+	display: inline-block;
+	height: 100px;
+	width: 100px;
+	padding:1px;
+	}
+	
+.roundtile-common {
+  top:0px;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  transition: transform .5s ease, visibility .5s ease;
+  width: 99px;
+  height: 99px;
+  border-radius: 50%;
+  border:2px solid #645b5e;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 100% 100%;
+  position:abosulte
 }
 
-@keyframes flip {
-    
-    50%  {background-image: url('img/roundback.png');
-	-ms-transform: scale(0.01, 1); /* IE 9 */
-    -webkit-transform: scale(0.01, 1); /* Safari */
-    transform: scale(0.01, 1);}
-    51%  {background-image: url('img/testtile.png');}
-    100%  {background-image: url('img/testtile.png');
-	-ms-transform: scale(1, 1); /* IE 9 */
-    -webkit-transform: scale(1, 1); /* Safari */
-    transform: scale(1, 1);}
+.roundtile--front {
+  top:0px;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  transition: transform .5s ease, visibility .5s ease;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border:2px solid #645b5e;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 100% 100%;
+  position: relative;
+  background-image: url('img/roundback.png');
+  transform: rotateY(0deg);
 }
+
+.roundtile--back {
+  top:0px;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  transition: transform .5s ease, visibility .5s ease;
+  width: 99px;
+  height: 99px;
+  border-radius: 50%;
+  border:2px solid #645b5e;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 100% 100%;
+  position:abosulte;
+  background-image: url('img/testtile.png');
+  visibility: hidden;
+  position: absolute;
+  transform: rotateY(180deg);
+}
+
+.roundtile.flipped  .roundtile--front {
+    visibility: hidden;
+    position: absolute;
+    transform: rotateY(-180deg);
+	}
+  
+ .roundtile.flipped  .roundtile--back {
+    visibility: visible;
+    position: static;
+    transform: rotateY(0deg);
+	
+  }
+
