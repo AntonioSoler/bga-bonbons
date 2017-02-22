@@ -89,7 +89,7 @@ $machinestates = array(
     		"descriptionmyturn" => clienttranslate('${you} car flip a round tile or pass'),
     		"type" => "activeplayer",
     		"action" => "stflipRound",
-			"possibleactions" => array( "selectRound", "pass" )
+			"possibleactions" => array( "selectRound", "pass" ),
 			"updateGameProgression" => true,
     		"transitions" => array( "processRound" => 5, "processSquare" => 2 )
     ),
@@ -108,7 +108,7 @@ $machinestates = array(
 		"descriptionmyturn" => clienttranslate('${you} found 3 money tiles and you can turn a round tile'),
 		"type" => "activeplayer",
 		"action" => "stbuyround",
-		"possibleactions" => array( "buyround" )
+		"possibleactions" => array( "buyround" ),
 		"updateGameProgression" => true,
         "transitions" => array("flipSquare" => 2) 
     ),
@@ -119,7 +119,7 @@ $machinestates = array(
 		"descriptionmyturn" => clienttranslate('${you} found another player couple and now has to give one of his round tiles in exchange'),
 		"type" => "activeplayer",
 		"action" => "stswapRound",
-		"possibleactions" => array( "swapRound" )
+		"possibleactions" => array( "swapRound" ),
 		"updateGameProgression" => true,
         "transitions" => array("flipSquare" => 2) 
     ),

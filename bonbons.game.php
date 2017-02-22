@@ -39,15 +39,12 @@ class bonbons extends Table
             //      ...
             //    "my_first_game_variant" => 100,
             //    "my_second_game_variant" => 101,
-            //      ...
-		
-		$this->squares = self::getNew( "module.common.deck" );
+            //      ...	
+        ) );
+        $this->squares = self::getNew( "module.common.deck" );
 		$this->squares->init( "squares" );
 		$this->rounds = self::getNew( "module.common.deck" );
 		$this->rounds->init( "rounds" );
-			
-        ) );
-        
 	}
 	
     protected function getGameName( )
@@ -96,7 +93,8 @@ class bonbons extends Table
 
         // TODO: setup the initial game situation here
        
-	   self::setGameStateInitialValue( 'moneytiles', 0 )
+	   self::setGameStateInitialValue( 'moneytiles', 0 );
+	   
 	   $rounds = array();
        $squares = array();
 	   foreach( $this->card_types as $cardType)
@@ -121,7 +119,7 @@ class bonbons extends Table
 				array_push($squares, $card);	
             }
 			
-	   
+	    }
 	   $this->squares->createCards( $squares, 'hidden' );
 	   $this->squares->shuffle( 'hidden' );
 	   $this->rounds->createCards( $rounds, 'hidden' );
@@ -133,7 +131,7 @@ class bonbons extends Table
 	   
 	   
         // Activate first player (which is in general a good idea :) )
-        $this->activeNextPlayer();
+     $this->activeNextPlayer();
 
         /************ End of the game initialization *****/
     }
@@ -266,16 +264,52 @@ class bonbons extends Table
     /*
     
     Example for game state "MyGameState":
+*/
 
-    function stMyGameState()
+		function stflipSquare()
+    {
+        // Do some stuff ...
+        
+        // (very often) go to another gamestate
+       // $this->gamestate->nextState( 'some_gamestate_transition' );
+    }    
+       function stprocessSquare()
     {
         // Do some stuff ...
         
         // (very often) go to another gamestate
         $this->gamestate->nextState( 'some_gamestate_transition' );
     }    
-    */
-
+       function stflipRound()
+    {
+        // Do some stuff ...
+        
+        // (very often) go to another gamestate
+        $this->gamestate->nextState( 'some_gamestate_transition' );
+    }    
+       function stprocessRound()
+    {
+        // Do some stuff ...
+        
+        // (very often) go to another gamestate
+        $this->gamestate->nextState( 'some_gamestate_transition' );
+    }    
+       function stbuyround()
+    {
+        // Do some stuff ...
+        
+        // (very often) go to another gamestate
+        $this->gamestate->nextState( 'some_gamestate_transition' );
+    }    
+   
+       function stswapRound()
+    {
+        // Do some stuff ...
+        
+        // (very often) go to another gamestate
+        $this->gamestate->nextState( 'some_gamestate_transition' );
+    }    
+   
 //////////////////////////////////////////////////////////////////////////////
 //////////// Zombie
 ////////////
