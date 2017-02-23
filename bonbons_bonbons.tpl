@@ -39,16 +39,16 @@
 				<div id="playerField_{PLAYER_ID}" class="playerfield">
 						<p style="color:#{PLAYER_COLOR}; text-align: center ;"  >{PLAYER_NAME}</p>
 						<div id="tile_1_{PLAYER_ID}" class="roundtile">
-							<div class="roundtile--front"></div><div class="roundtile--back"></div>
+							<div class="roundtile--front"></div><div id="rtile_back_1_{PLAYER_ID}" class="roundtile--back"></div>
 						</div>
 						<div id="tile_2_{PLAYER_ID}" class="roundtile">
-							<div class="roundtile--front"></div><div class="roundtile--back"></div>
+							<div class="roundtile--front"></div><div id="rtile_back_2_{PLAYER_ID}" class="roundtile--back"></div>
 						</div>
 						<div id="tile_3_{PLAYER_ID}" class="roundtile">
-							<div class="roundtile--front"></div><div class="roundtile--back"></div>
+							<div class="roundtile--front"></div><div id="rtile_back_3_{PLAYER_ID}" class="roundtile--back"></div>
 						</div>
 						<div id="tile_4_{PLAYER_ID}" class="roundtile">
-							<div class="roundtile--front"></div><div class="roundtile--back"></div>
+							<div class="roundtile--front"></div><div id="rtile_back_4_{PLAYER_ID}" class="roundtile--back"></div>
 						</div>
 						
 				</div>
@@ -64,6 +64,10 @@
 var jstpl_some_game_item='<div class="my_game_item" id="my_game_item_${id}"></div>';
 
 */
+
+
+var jstpl_squareback='<div id="stile_back_${position}" class="squaretile--back" style="background-position: ${x}px ${y}px ;"></div>';
+var jstpl_roundback='<div id="rtile_back_${position}_${player_id}" class="roundtile--back" style="background-position: ${x}px ${y}px ;"></div>';
 
 </script>  
 

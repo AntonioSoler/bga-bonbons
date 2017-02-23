@@ -124,15 +124,16 @@ class bonbons extends Table
 	    }
 		$this->squares->createCards( $squares, 'hidden' );
 		$this->squares->shuffle( 'hidden' );
-		$this->rounds->createCards( $rounds, 'hidden' );
-		$this->rounds->shuffle( 'hidden' );
+		
+		$this->rounds->createCards( $rounds, 'deck' );
+		$this->rounds->shuffle( 'deck' );
 	   
 													//pick round tiles for players	   
 		foreach( $players as $player_id => $player )
 		{
 			for ($i = 1; $i <= 4; $i++)
 			{
-				$this->rounds->pickCardForLocation( 'hidden', "visible".$player_id , $i ); //  Draw a card
+				$this->rounds->pickCardForLocation( 'deck', "hidden".$player_id , $i ); //  Draw a card
 			}
 		}
 	    // Activate first player (which is in general a good idea :) )
@@ -162,8 +163,13 @@ class bonbons extends Table
         $sql = "SELECT player_id id, player_score score FROM player ";
         $result['players'] = self::getCollectionFromDb( $sql );
   
-        // TODO: Gather all information about current game situation (visible by player $current_player_id).
-  
+									// TODO: CHANGE TO VISIBLE!!!!
+		$playerfields= array ();
+		$result['table'] = $this->squares->getCardsInLocation( 'hidden' );
+		
+		$sql = "SELECT  card_type type ,card_location location, card_location_arg  location_arg FROM rounds where card_location like 'hidden%' ";
+        $result['playerfields'] = self::getCollectionFromDb( $sql );
+					
         return $result;
     }
 

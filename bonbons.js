@@ -78,6 +78,19 @@ function (dojo, declare) {
             // Setup game notifications to handle (see "setupNotifications" method below)
             this.setupNotifications();
 			
+			for( var i in this.gamedatas.table )
+            {
+                var card = this.gamedatas.table[i];
+			    this.flipsquare(card['location_arg'],card['type'],false);
+			}
+			
+			for( var i in this.gamedatas.playerfields )
+            {
+				debugger;
+                var card = this.gamedatas.playerfields[i];
+			    this.flipround(card['location'],card['location_arg'],card['type'],false);
+			}
+			
 			dojo.query('.roundtile').onclick( function(evt) { 
 			dojo.toggleClass(this, 'flipped');
 			});
@@ -181,6 +194,36 @@ function (dojo, declare) {
             script.
         
         */
+		
+		flipsquare: function ( location_arg, card_id, visible )
+		{
+			xpos= -100*((card_id - 1 )%4 );
+			ypos= -100*(Math.floor( (card_id -1 ) / 4 ));
+			dojo.place(
+                this.format_block('jstpl_squareback', {
+                    position: location_arg ,
+					x : xpos,
+					y : ypos  }), 'stile_back_'+location_arg , "replace" );		
+			
+			//dojo.query('#stile_'+location_arg).addClass("visible");
+			
+		},
+		
+		flipround: function ( location, location_arg, card_id, visible )
+		{
+			player_id = location.replace(/\D/g,'');
+			xpos= -100*((card_id - 1 )%4 );
+			ypos= -100*(Math.floor( (card_id -1 ) / 4 ));
+			dojo.place(
+                this.format_block('jstpl_roundback', {
+                    position: location_arg ,
+					player_id : player_id ,
+					x : xpos,
+					y : ypos  }), 'rtile_back_'+location_arg+'_'+player_id , "replace" );		
+			
+			//dojo.query('#stile_'+location_arg).addClass("visible");
+			
+		},
 
 
         ///////////////////////////////////////////////////

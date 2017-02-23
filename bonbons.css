@@ -75,7 +75,7 @@ body {
  }
 
 #tablearea {
- margin: 20px;
+ margin: 40px;
  text-align: center;
  ma
  display: inline-block;
@@ -174,13 +174,12 @@ body {
   border-radius: 50%;
   border:2px solid #645b5e;
   background-repeat: no-repeat;
-  background-position: center center;
-  background-size: 100% 100%;
   position:abosulte;
-  background-image: url('img/testtile.png');
+  background-image: url('img/tiles.png');
   visibility: hidden;
   position: absolute;
   transform: rotateY(180deg);
+  
 }
 
 .roundtile.flipped  .roundtile--front {
@@ -189,12 +188,24 @@ body {
     transform: rotateY(-180deg);
 	}
   
- .roundtile.flipped  .roundtile--back {
+ .roundtile.flipped .roundtile--back {
     visibility: visible;
     position: static;
     transform: rotateY(0deg);
 	}
 
+.roundtile.visible .roundtile--front {
+    visibility: hidden;
+    position: absolute;
+    transform: rotateY(-180deg);
+	}
+  
+ .roundtile.visible .roundtile--back {
+    visibility: visible;
+    position: static;
+    transform: rotateY(0deg);	
+	}
+	
 .squaretile {
 	perspective: 1200px;
 	position: relative;
@@ -230,10 +241,8 @@ body {
   height: 99px;
   border:1px solid #645b5e;
   background-repeat: no-repeat;
-  background-position: center center;
-  background-size: 100% 100%;
   position: relative;
-  background-image: url('img/testtile.png');
+  background-image: url('img/tiles.png');
   visibility: hidden;
   position: absolute;
   transform: rotateY(180deg);
@@ -244,10 +253,21 @@ body {
     position: absolute;
     transform: rotateY(-180deg);
 	}
-  
+
+.squaretile.visible  .squaretile--front {
+    visibility: hidden;
+    position: absolute;
+    transform: rotateY(-180deg);
+	}
+	
  .squaretile.flipped  .squaretile--back {
     visibility: visible;
     position: static;
     transform: rotateY(0deg);
 	}
 
+.squaretile.visible  .squaretile--back {
+    visibility: visible;
+    position: static;
+    transform: rotateY(0deg);
+	}
