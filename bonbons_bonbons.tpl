@@ -38,16 +38,16 @@
 				<!-- BEGIN playerfield -->
 				<div id="playerField_{PLAYER_ID}" class="playerfield">
 						<p style="color:#{PLAYER_COLOR}; text-align: center ;"  >{PLAYER_NAME}</p>
-						<div id="tile_1_{PLAYER_ID}" class="roundtile">
+						<div id="rtile_1_{PLAYER_ID}" class="roundtile">
 							<div class="roundtile--front"></div><div id="rtile_back_1_{PLAYER_ID}" class="roundtile--back"></div>
 						</div>
-						<div id="tile_2_{PLAYER_ID}" class="roundtile">
+						<div id="rtile_2_{PLAYER_ID}" class="roundtile">
 							<div class="roundtile--front"></div><div id="rtile_back_2_{PLAYER_ID}" class="roundtile--back"></div>
 						</div>
-						<div id="tile_3_{PLAYER_ID}" class="roundtile">
+						<div id="rtile_3_{PLAYER_ID}" class="roundtile">
 							<div class="roundtile--front"></div><div id="rtile_back_3_{PLAYER_ID}" class="roundtile--back"></div>
 						</div>
-						<div id="tile_4_{PLAYER_ID}" class="roundtile">
+						<div id="rtile_4_{PLAYER_ID}" class="roundtile">
 							<div class="roundtile--front"></div><div id="rtile_back_4_{PLAYER_ID}" class="roundtile--back"></div>
 						</div>
 						

@@ -108,7 +108,7 @@ $machinestates = array(
 		"descriptionmyturn" => clienttranslate('${you} found 3 money tiles and you can turn a round tile'),
 		"type" => "activeplayer",
 		"action" => "stbuyround",
-		"possibleactions" => array( "buyround" ),
+		"possibleactions" => array( "selectRound" ),
 		"updateGameProgression" => true,
         "transitions" => array("flipSquare" => 2) 
     ),
@@ -119,7 +119,7 @@ $machinestates = array(
 		"descriptionmyturn" => clienttranslate('${you} found another player couple and now has to give one of his round tiles in exchange'),
 		"type" => "activeplayer",
 		"action" => "stswapRound",
-		"possibleactions" => array( "swapRound" ),
+		"possibleactions" => array( "selectRound" ),
 		"updateGameProgression" => true,
         "transitions" => array("flipSquare" => 2) 
     ),

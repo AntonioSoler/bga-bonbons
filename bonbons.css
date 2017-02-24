@@ -77,7 +77,7 @@ body {
 #tablearea {
  margin: 40px;
  text-align: center;
- ma
+ margin:60px;
  display: inline-block;
  display: inline-block;
  background-color: #fdf3f7;
@@ -97,16 +97,22 @@ body {
 	    border-collapse:separate;
 	    border-spacing:3px;
 	    padding:1px;
-	    margin:42px;
+	    margin:60px;
 	    box-shadow: 
-	    0 0 0 2px #cf478d,
-	     0 0 0 5px #fdf3f7,
-	      0 0 0 15px #cf478d,
-	       0 0 0 18px #fdf3f7,
-	        0 0 0 20px #cf478d,
-	        0 0 0 23px #fdf3f7,
-	        0 0 0 29px #72afa0,
-	        0 0 0 33px #fdf3f7;
+	    0 0 0 2px #e664ab,
+	    0 0 0 4px #fdf3f7, 
+	    0 0 0 12px #e664ab,
+	    0 0 0 14px #fdf3f7, 
+	    0 0 0 16px #e664ab, 
+	    0 0 0 21px #fdf3f7, 
+	    0 0 0 32px #6db6af, 
+	    0 0 0 38px #fdf3f7, 
+	    0 0 0 40px #e664ab, 
+	    0 0 0 42px #fdf3f7,
+	    0 0 0 48px #e664ab,
+	    0 0 0 50px #fdf3f7,
+	    0 0 0 52px #e664ab
+	     ;
 	}
 	.boardtable tbody {
 		border:8px  #fdf3f7;
@@ -137,7 +143,7 @@ body {
 }
 
 .roundtile {
-	perspective: 1200px;
+	perspective: 200px;
 	position: relative;
 	margin: 2px;
 	top:0px;
@@ -207,7 +213,7 @@ body {
 	}
 	
 .squaretile {
-	perspective: 1200px;
+	perspective: 200px;
 	position: relative;
 	margin: 0px;
 	top:0px;

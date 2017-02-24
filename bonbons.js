@@ -76,21 +76,24 @@ function (dojo, declare) {
             }*/
 			
             // Setup game notifications to handle (see "setupNotifications" method below)
-            this.setupNotifications();
-			
-			for( var i in this.gamedatas.table )
-            {
-                var card = this.gamedatas.table[i];
-			    this.flipsquare(card['location_arg'],card['type'],false);
+            
+			//debugger;
+			if ( Object.keys(this.gamedatas.playerfields).length >= 1)
+			{
+				for( var i in this.gamedatas.table )
+				{
+					var card = this.gamedatas.table[i];
+					this.flipsquare(card['location_arg'],card['type'],false);
+				}
 			}
-			
-			for( var i in this.gamedatas.playerfields )
-            {
-				debugger;
-                var card = this.gamedatas.playerfields[i];
-			    this.flipround(card['location'],card['location_arg'],card['type'],false);
+			if ( Object.keys(this.gamedatas.playerfields).length >= 1)
+			{
+				for( var i in this.gamedatas.playerfields )
+				{
+					var card = this.gamedatas.playerfields[i];
+					this.flipround(card['location'],card['location_arg'],card['type'],false);
+				}
 			}
-			
 			dojo.query('.roundtile').onclick( function(evt) { 
 			dojo.toggleClass(this, 'flipped');
 			});
@@ -99,6 +102,7 @@ function (dojo, declare) {
 			dojo.toggleClass(this, 'flipped');
 			});
 
+			this.setupNotifications();
             console.log( "Ending game setup" );
         },
        
@@ -181,6 +185,14 @@ function (dojo, declare) {
                     this.addActionButton( 'button_3_id', _('Button 3 label'), 'onMyMethodToCall3' ); 
                     break;
 */
+				case 'flipRound':
+                    
+                    // Add 3 action buttons in the action status bar:
+                    
+                    this.addActionButton( 'pass_button', _(' Pass '), 'selectPass' ); 
+                    
+                    break;	
+			
                 }
             }
         },        
@@ -273,6 +285,73 @@ function (dojo, declare) {
         },        
         
         */
+		
+		selectRound: function( evt )
+        {
+            // Stop this event propagation
+            dojo.stopEvent( evt );
+			if( ! this.checkAction( 'selectRound' ) )
+            {   return; }
+
+            // Get the cliqued pos and Player field ID
+            var coords = evt.currentTarget.id.split('_');
+            var pos = coords[1];
+            var field_id = coords[2];
+
+            if( dojo.hasClass( 'rtile_'+pos+'_'+field_id ,'visible' ) || dojo.hasClass( 'rtile_'+pos+'_'+field_id ,'flipped' ))
+            {
+                // This is not a possible move => the click does nothing
+                return ;
+            }
+            
+            if( this.checkAction( 'selectRound' ) )    // Check that this action is possible at this moment
+            {            
+                this.ajaxcall( "/bonbons/bonbons/selectRound.html", {
+                    pos:pos,
+                    field_id:field_id
+                }, this, function( result ) {} );
+            }            
+        },
+		
+		selectSquare: function( evt )
+        {
+            // Stop this event propagation
+            dojo.stopEvent( evt );
+			if( ! this.checkAction( 'selectSquare' ) )
+            {   return; }
+
+            // Get the cliqued pos and Player field ID
+            var coords = evt.currentTarget.id.split('_');
+            var pos = coords[1];
+
+            if( dojo.hasClass( 'stile_'+pos , 'visible' ) || dojo.hasClass( 'stile_'+pos ,'flipped' ))
+            {
+                // This is not a possible move => the click does nothing
+                return ;
+            }
+            
+            if( this.checkAction( 'selectSquare' ) )    // Check that this action is possible at this moment
+            {            
+                this.ajaxcall( "/bonbons/bonbons/selectSquare.html", {
+                    pos:pos
+                }, this, function( result ) {} );
+            }            
+        },
+		
+		selectPass: function( evt )
+        {
+            // Stop this event propagation
+            dojo.stopEvent( evt );
+			if( ! this.checkAction( 'pass' ) )
+            {   return; }
+       
+            if( this.checkAction( 'pass' ) )    // Check that this action is possible at this moment
+            {            
+                this.ajaxcall( "/bonbons/bonbons/pass.html", {
+                    pos:pos
+                }, this, function( result ) {} );
+            }            
+        },
 
         
         ///////////////////////////////////////////////////

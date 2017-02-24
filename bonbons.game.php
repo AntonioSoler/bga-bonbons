@@ -34,6 +34,8 @@ class bonbons extends Table
         // Note: afterwards, you can get/set the global variables with getGameStateValue/setGameStateInitialValue/setGameStateValue
         parent::__construct();self::initGameStateLabels( array( 
                "moneytiles" => 10,
+			   "squareselected" => 11,
+			   "roundselected" => 12
 			   
             //    "my_second_global_variable" => 11,
             //      ...
@@ -94,6 +96,8 @@ class bonbons extends Table
         // TODO: setup the initial game situation here
        
 	   self::setGameStateInitialValue( 'moneytiles', 0 );
+	   self::setGameStateInitialValue( 'squareselected', 0 );
+	   self::setGameStateInitialValue( 'roundselected', 44 ); 
 	   
 	   $rounds = array();
        $squares = array();
@@ -185,9 +189,13 @@ class bonbons extends Table
     */
     function getGameProgression()
     {
-        // TODO: compute and return the game progression
-
-        return 0;
+        
+		$players = self::loadPlayersBasicInfos();
+		$sql = "SELECT  card_type type ,card_location location, card_location_arg  location_arg FROM rounds where card_location like 'visible%' ";
+        $visiblecards = self::getCollectionFromDb( $sql );
+        $progression = 100 * sizeof($visiblecards) / sizeof($players)*4 ;
+		
+        return $progression;
     }
 
 
@@ -235,6 +243,17 @@ class bonbons extends Table
     }
     
     */
+	
+	function selectSquare( $pos )
+    {
+        // Check that this is the player's turn and that it is a "possible action" at this game state (see states.inc.php)
+        self::checkAction( 'selectSquare' ); 
+        self::setGameStateValue( 'squareselected', $pos );
+		$this->gamestate->nextState( 'processSquare' );
+        
+		
+          
+    }
 
     
 //////////////////////////////////////////////////////////////////////////////
@@ -287,10 +306,15 @@ class bonbons extends Table
     }    
        function stprocessSquare()
     {
-        // Do some stuff ...
-        
-        // (very often) go to another gamestate
-        $this->gamestate->nextState( 'some_gamestate_transition' );
+        // Notify all players about the tile fliped
+		$player_id = self::getActivePlayerId();
+		
+        self::notifyAllPlayers( "squareFliped", clienttranslate( '${player_name} fliped a square tile.' ), array(
+            'player_id' => $player_id,
+            'player_name' => self::getActivePlayerName(),
+            'pos' => $pos,
+            'card_type' => $card_type
+        ) );
     }    
        function stflipRound()
     {
