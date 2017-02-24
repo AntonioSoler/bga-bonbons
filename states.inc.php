@@ -71,7 +71,7 @@ $machinestates = array(
     		"action" => "stflipSquare",
 			"possibleactions" => array( "selectSquare" ),
 			"updateGameProgression" => true,
-    		"transitions" => array( "processSquare" => 3)
+    		"transitions" => array( "processSquare" => 3 )
     ),
     
 	3 => array(
@@ -80,7 +80,7 @@ $machinestates = array(
         "description" => clienttranslate('a player has flipped a square tile'),
 		"action" => "stprocessSquare",
         "updateGameProgression" => true,
-        "transitions" => array("flipSquare" => 2, "flipRound" => 4, "buyRound" => 5) 
+        "transitions" => array("flipSquare" => 2, "flipRound" => 4, "buyRound" => 5 , "endOfTurn"  => 8 ) 
     ),
 	
 	4 => array(
@@ -91,7 +91,7 @@ $machinestates = array(
     		"action" => "stflipRound",
 			"possibleactions" => array( "selectRound", "pass" ),
 			"updateGameProgression" => true,
-    		"transitions" => array( "processRound" => 5, "processSquare" => 2 )
+    		"transitions" => array( "processRound" => 5 )
     ),
     5 => array(
         "name" => "processRound", 
@@ -99,7 +99,7 @@ $machinestates = array(
         "description" => clienttranslate('a player has flipped a round tile'),
 		"action" => "stprocessRound",
         "updateGameProgression" => true,
-        "transitions" => array("flipSquare" => 2, "swapRound" => 7 , "gameEnd" => 99 ) 
+        "transitions" => array("endOfTurn" => 8, "swapRound" => 7  ) 
     ),
 	
 	6 => array(
@@ -110,10 +110,10 @@ $machinestates = array(
 		"action" => "stbuyround",
 		"possibleactions" => array( "selectRound" ),
 		"updateGameProgression" => true,
-        "transitions" => array("flipSquare" => 2) 
+        "transitions" => array("endOfTurn" => 8) 
     ),
 	
-	6 => array(
+	7 => array(
         "name" => "swapRound", 
         "description" => clienttranslate('${actplayer} found another player couple and now has to give one of his round tiles in exchange'),
 		"descriptionmyturn" => clienttranslate('${you} found another player couple and now has to give one of his round tiles in exchange'),
@@ -121,7 +121,16 @@ $machinestates = array(
 		"action" => "stswapRound",
 		"possibleactions" => array( "selectRound" ),
 		"updateGameProgression" => true,
-        "transitions" => array("flipSquare" => 2) 
+        "transitions" => array( "endOfTurn" => 8) 
+    ),
+	
+	 8 => array(
+        "name" => "endOfTurn", 
+        "type" => "game",
+        "description" => clienttranslate('a player has flipped a round tile'),
+		"action" => "stendofturn",
+        "updateGameProgression" => true,
+        "transitions" => array( "flipSquare" => 2 , "gameEnd" => 99  ) 
     ),
 	
 /*

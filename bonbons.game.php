@@ -35,7 +35,8 @@ class bonbons extends Table
         parent::__construct();self::initGameStateLabels( array( 
                "moneytiles" => 10,
 			   "squareselected" => 11,
-			   "roundselected" => 12
+			   "roundselected" => 12,
+			   "fieldselected" => 13
 			   
             //    "my_second_global_variable" => 11,
             //      ...
@@ -97,7 +98,8 @@ class bonbons extends Table
        
 	   self::setGameStateInitialValue( 'moneytiles', 0 );
 	   self::setGameStateInitialValue( 'squareselected', 0 );
-	   self::setGameStateInitialValue( 'roundselected', 44 ); 
+	   self::setGameStateInitialValue( 'roundselected', 44 );
+	   self::setGameStateInitialValue( 'fieldselected', 11111 ); 
 	   
 	   $rounds = array();
        $squares = array();
@@ -250,9 +252,57 @@ class bonbons extends Table
         self::checkAction( 'selectSquare' ); 
         self::setGameStateValue( 'squareselected', $pos );
 		$this->gamestate->nextState( 'processSquare' );
-        
-		
           
+    }
+	
+	//////////////////////////////////////////////////////////////////////////////
+	
+	function selectRound( $pos , $field_id)
+    {
+        // Check that this is the player's turn and that it is a "possible action" at this game state (see states.inc.php)
+        self::checkAction( 'selectRound' ); 
+        $player_id = self::getActivePlayerId();
+		$sql = "SELECT card_type from rounds where card_location_arg=".$pos." and card_location like 'hidden".$field_id."'" ;
+        $card_type = self::getUniqueValueFromDb( $sql );
+		
+		$state=$this->gamestate->state(); 
+		
+		if( $state['name'] == 'flipRound' ) 
+			{
+			self::setGameStateValue( 'roundselected', $pos );
+			self::setGameStateValue( 'fieldselected', $field_id );
+			
+			$this->gamestate->nextState( 'processRound' );
+			}
+			
+		if( $state['name'] == 'buyRound' ) 
+			{
+			$sql = "UPDATE rounds SET card_location='visible$player_id' WHERE card_location_arg=$pos and card_location like 'hidden".$field_id."'";
+	        self::DbQuery( $sql ); 
+			self::DbQuery( "UPDATE player SET player_score=player_score+1 WHERE player_id='$player_id'" );
+			self::notifyAllPlayers( "roundVisible", clienttranslate( '${player_name} has revealed a round token for findind three money tiles.' ), array(
+				'player_id' => $player_id,
+				'player_name' => self::getActivePlayerName(),
+				'pos' => $pos,
+				'card_type' => $card_type
+				) );
+			self::setGameStateInitialValue( 'moneytiles', 0 );
+			$this->gamestate->nextState( 'flipSquare' );
+			}
+			
+		if( $state['name'] == 'swapRound' ) 
+			{
+			$roundselected=self::getGameStateValue( 'roundselected' );
+		    $fieldselected=self::getGameStateValue('fieldselected');	
+			
+		    $sql = "UPDATE rounds SET card_location='visible$player_id' , card_location_arg=$pos WHERE card_location_arg=$roundselected and card_location like 'hidden$fieldselected'";
+	        self::DbQuery( $sql );
+			$sql = "UPDATE rounds SET card_location_arg='hidden$fieldselected' , card_location_arg=$roundselected WHERE card_location_arg=$pos and card_location like 'hidden".$field_id."'";
+	        self::DbQuery( $sql ); 
+	         			
+			$this->gamestate->nextState( 'flipSquare' );
+			}
+             
     }
 
     
@@ -295,56 +345,154 @@ class bonbons extends Table
     /*
     
     Example for game state "MyGameState":
-*/
-
+*/    
 		function stflipSquare()
     {
-        // Do some stuff ...
-        
-        // (very often) go to another gamestate
-       // $this->gamestate->nextState( 'some_gamestate_transition' );
+	}
+	
+		function stendofturn()
+    {   
+		self::setGameStateValue( 'moneytiles', 0 );
+        $player_id = self::getActivePlayerId();
+		$sql = "SELECT card_type type ,card_location location, card_location_arg  location_arg FROM rounds where card_location like 'hidden$player_id' ";
+        $remaining = self::getCollectionFromDb( $sql );
+        if ( sizeof($remaining) == 0 )
+		{
+			$this->gamestate->nextState( 'gameEnd' );
+		}
+		else if (self::getGameStateValue('moneytiles') == 0) 
+		{   
+			self::activeNextPlayer();
+			$this->gamestate->nextState( 'flipSquare' );
+		}
     }    
-       function stprocessSquare()
+    
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	function stprocessSquare()
     {
         // Notify all players about the tile fliped
 		$player_id = self::getActivePlayerId();
+		$squareselected=self::getGameStateValue( 'squareselected');
+		$sql = "SELECT card_type from squares where card_location_arg=".$squareselected ;
+        $card_type = self::getUniqueValueFromDb( $sql );
+		if ( $card_type <= 32 )
+		{
+			self::notifyAllPlayers( "squareFliped", clienttranslate( '${player_name} fliped a square tile.' ), array(
+				'player_id' => $player_id,
+				'player_name' => self::getActivePlayerName(),
+				'pos' => $pos,
+				'card_type' => $card_type
+			) );
+			$this->gamestate->nextState( 'flipRound' );
+		}
+		else if ( $card_type == 33 )
+		{
+			self::incGameStateValue( 'moneytiles', 1 );
 		
-        self::notifyAllPlayers( "squareFliped", clienttranslate( '${player_name} fliped a square tile.' ), array(
-            'player_id' => $player_id,
-            'player_name' => self::getActivePlayerName(),
-            'pos' => $pos,
-            'card_type' => $card_type
-        ) );
-    }    
+			self::notifyAllPlayers( "squareFliped", clienttranslate( '${player_name} found a money tile and can flip another square tile.' ), array(
+				'player_id' => $player_id,
+				'player_name' => self::getActivePlayerName(),
+				'pos' => $pos,
+				'card_type' => $card_type
+			) );
+			$this->gamestate->nextState( 'flipSquare' );
+		} 
+		else if ( $card_type == 34 )
+		{
+			
+			$this->rounds->pickCardForLocation( 'deck', "hidden".$player_id , 5 );
+			self::notifyAllPlayers( "emptyPackage", clienttranslate( '${player_name} found an black empty package... BAD LUCK! Now this player takes an extra round tile.' ), array(
+				'player_id' => $player_id,
+				'player_name' => self::getActivePlayerName(),
+				'pos' => $pos,
+				'card_type' => $card_type
+			) );
+			$this->gamestate->nextState( 'endOfTurn' );
+		}
+	}
+	//////////////////////////////////////////////////////////////////////////////////////////////////
        function stflipRound()
     {
-        // Do some stuff ...
         
-        // (very often) go to another gamestate
-        $this->gamestate->nextState( 'some_gamestate_transition' );
+        
     }    
+	
+	//////////////////////////////////////////////////////////////////////////////////////////////////
        function stprocessRound()
     {
-        // Do some stuff ...
-        
-        // (very often) go to another gamestate
-        $this->gamestate->nextState( 'some_gamestate_transition' );
-    }    
-       function stbuyround()
+        $player_id = self::getActivePlayerId();
+		$squareselected=self::getGameStateValue( 'squareselected' );
+		$roundselected=self::getGameStateValue( 'roundselected' );
+		$fieldselected=self::getGameStateValue('fieldselected');
+		
+		$sql = "SELECT card_type from squares where card_location_arg=".$squareselected ;
+        $square_type = self::getUniqueValueFromDb( $sql );
+		$sql = "SELECT card_type from rounds where card_location_arg=".$roundselected ."and card_location like 'hidden".$fieldselected."'";;
+        $round_type = self::getUniqueValueFromDb( $sql );
+		
+        if ( $square_type != $round_type  )
+		{
+			self::notifyAllPlayers( "roundFliped", clienttranslate( '${player_name} fliped a round tile.' ), array(
+				'player_id' => $player_id,
+				'player_name' => self::getActivePlayerName(),
+				'roundselected' => $roundselected,
+				'fieldselected' => $fieldselected,
+				'card_type' => $round_type
+			) );
+			$this->gamestate->nextState( 'flipSquare' );
+		}
+		else if ( $player_id == $fieldselected )
+		{
+			$sql = "UPDATE rounds SET card_location='visible$player_id' WHERE card_location_arg=$roundselected and card_location like 'hidden$fieldselected'";
+	        self::DbQuery( $sql );
+			$sql = "UPDATE squares SET card_location='visible' WHERE card_location_arg=$squareselected";
+	        self::DbQuery( $sql ); 
+			self::DbQuery( "UPDATE player SET player_score=player_score+1 WHERE player_id='$player_id'" );
+			
+			self::notifyAllPlayers( "match", clienttranslate( '${player_name} found a match.' ), array(
+				'player_id' => $player_id,
+				'player_name' => self::getActivePlayerName(),
+				'roundselected' => $roundselected,
+				'fieldselected' => $fieldselected,
+				'card_type' => $round_type
+			) );
+			
+			$this->gamestate->nextState( 'flipSquare' );
+		}
+		
+		else if ( $player_id != $fieldselected )
+		{
+			
+			$sql = "UPDATE squares SET card_location='visible' WHERE card_location_arg=$squareselected";
+	        self::DbQuery( $sql ); 
+			self::DbQuery( "UPDATE player SET player_score=player_score+1 WHERE player_id='$player_id'" );
+			
+			self::notifyAllPlayers( "theft", clienttranslate( "${player_name} found a match on other player's field. Now ${player_name} can give one round tile to this player in exchange." ), array(
+				'player_id' => $player_id,
+				'player_name' => self::getActivePlayerName(),
+				'roundselected' => $roundselected,
+				'fieldselected' => $fieldselected,
+				'card_type' => $round_type
+			) );
+			
+			$this->gamestate->nextState( 'swapRound' );
+		}
+		
+    }  
+	
+	//////////////////////////////////////////////////////////////////////////////////////////////////
+     function stbuyround()
     {
-        // Do some stuff ...
-        
-        // (very often) go to another gamestate
-        $this->gamestate->nextState( 'some_gamestate_transition' );
+        self::setGameStateValue( 'moneytiles', 0 );
     }    
    
+   //////////////////////////////////////////////////////////////////////////////////////////////////
        function stswapRound()
     {
-        // Do some stuff ...
-        
-        // (very often) go to another gamestate
-        $this->gamestate->nextState( 'some_gamestate_transition' );
+        self::setGameStateValue( 'moneytiles', 0 );
     }    
+   
    
 //////////////////////////////////////////////////////////////////////////////
 //////////// Zombie
