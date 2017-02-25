@@ -171,9 +171,9 @@ class bonbons extends Table
   
 									// TODO: CHANGE TO VISIBLE!!!!
 		$playerfields= array ();
-		$result['table'] = $this->squares->getCardsInLocation( 'hidden' );
+		$result['table'] = $this->squares->getCardsInLocation( 'visible' );
 		
-		$sql = "SELECT  card_type type ,card_location location, card_location_arg  location_arg FROM rounds where card_location like 'hidden%' ";
+		$sql = "SELECT  card_type type ,card_location location, card_location_arg  location_arg FROM rounds where card_location like 'visible%' ";
         $result['playerfields'] = self::getCollectionFromDb( $sql );
 					
         return $result;
@@ -245,6 +245,14 @@ class bonbons extends Table
     }
     
     */
+	function selectPass( $pos )
+    {
+        // Check that this is the player's turn and that it is a "possible action" at this game state (see states.inc.php)
+        self::checkAction( 'selectPass' ); 
+        
+		$this->gamestate->nextState( 'endOfTurn' );
+          
+    }
 	
 	function selectSquare( $pos )
     {
@@ -287,7 +295,7 @@ class bonbons extends Table
 				'card_type' => $card_type
 				) );
 			self::setGameStateInitialValue( 'moneytiles', 0 );
-			$this->gamestate->nextState( 'flipSquare' );
+			$this->gamestate->nextState( 'endOfTurn' );
 			}
 			
 		if( $state['name'] == 'swapRound' ) 
@@ -300,7 +308,7 @@ class bonbons extends Table
 			$sql = "UPDATE rounds SET card_location_arg='hidden$fieldselected' , card_location_arg=$roundselected WHERE card_location_arg=$pos and card_location like 'hidden".$field_id."'";
 	        self::DbQuery( $sql ); 
 	         			
-			$this->gamestate->nextState( 'flipSquare' );
+			$this->gamestate->nextState( 'endOfTurn' );
 			}
              
     }
@@ -381,7 +389,7 @@ class bonbons extends Table
 			self::notifyAllPlayers( "squareFliped", clienttranslate( '${player_name} fliped a square tile.' ), array(
 				'player_id' => $player_id,
 				'player_name' => self::getActivePlayerName(),
-				'pos' => $pos,
+				'pos' => $squareselected,
 				'card_type' => $card_type
 			) );
 			$this->gamestate->nextState( 'flipRound' );
@@ -393,19 +401,20 @@ class bonbons extends Table
 			self::notifyAllPlayers( "squareFliped", clienttranslate( '${player_name} found a money tile and can flip another square tile.' ), array(
 				'player_id' => $player_id,
 				'player_name' => self::getActivePlayerName(),
-				'pos' => $pos,
+				'pos' => $squareselected,
 				'card_type' => $card_type
 			) );
 			$this->gamestate->nextState( 'flipSquare' );
 		} 
 		else if ( $card_type == 34 )
 		{
-			
+			$sql = "UPDATE squares SET card_location='visible' WHERE card_location_arg=$squareselected";
+	        self::DbQuery( $sql ); 
 			$this->rounds->pickCardForLocation( 'deck', "hidden".$player_id , 5 );
 			self::notifyAllPlayers( "emptyPackage", clienttranslate( '${player_name} found an black empty package... BAD LUCK! Now this player takes an extra round tile.' ), array(
 				'player_id' => $player_id,
 				'player_name' => self::getActivePlayerName(),
-				'pos' => $pos,
+				'pos' => $squareselected,
 				'card_type' => $card_type
 			) );
 			$this->gamestate->nextState( 'endOfTurn' );
@@ -428,7 +437,7 @@ class bonbons extends Table
 		
 		$sql = "SELECT card_type from squares where card_location_arg=".$squareselected ;
         $square_type = self::getUniqueValueFromDb( $sql );
-		$sql = "SELECT card_type from rounds where card_location_arg=".$roundselected ."and card_location like 'hidden".$fieldselected."'";;
+		$sql = "SELECT card_type from rounds where card_location_arg=".$roundselected ." and card_location like 'hidden".$fieldselected."'";;
         $round_type = self::getUniqueValueFromDb( $sql );
 		
         if ( $square_type != $round_type  )
@@ -440,7 +449,7 @@ class bonbons extends Table
 				'fieldselected' => $fieldselected,
 				'card_type' => $round_type
 			) );
-			$this->gamestate->nextState( 'flipSquare' );
+			$this->gamestate->nextState( 'endOfTurn' );
 		}
 		else if ( $player_id == $fieldselected )
 		{
@@ -454,6 +463,7 @@ class bonbons extends Table
 				'player_id' => $player_id,
 				'player_name' => self::getActivePlayerName(),
 				'roundselected' => $roundselected,
+				'squareselected' => $squareselected,
 				'fieldselected' => $fieldselected,
 				'card_type' => $round_type
 			) );

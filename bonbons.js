@@ -78,12 +78,12 @@ function (dojo, declare) {
             // Setup game notifications to handle (see "setupNotifications" method below)
             
 			//debugger;
-			if ( Object.keys(this.gamedatas.playerfields).length >= 1)
+			if ( Object.keys(this.gamedatas.table).length >= 1)
 			{
 				for( var i in this.gamedatas.table )
 				{
 					var card = this.gamedatas.table[i];
-					this.flipsquare(card['location_arg'],card['type'],false);
+					this.flipsquare(card['location_arg'],card['type'],true);
 				}
 			}
 			if ( Object.keys(this.gamedatas.playerfields).length >= 1)
@@ -91,16 +91,18 @@ function (dojo, declare) {
 				for( var i in this.gamedatas.playerfields )
 				{
 					var card = this.gamedatas.playerfields[i];
-					this.flipround(card['location'],card['location_arg'],card['type'],false);
+					this.flipround(card['location'],card['location_arg'],card['type'],true);
 				}
 			}
-			dojo.query('.roundtile').onclick( function(evt) { 
+			/*dojo.query('.roundtile').onclick( function(evt) { 
 			dojo.toggleClass(this, 'flipped');
 			});
 			
 			dojo.query('.squaretile').onclick( function(evt) { 
 			dojo.toggleClass(this, 'flipped');
-			});
+			});*/
+			 dojo.query( '.squaretile' ).connect( 'onclick', this, 'selectSquare' );
+			 dojo.query( '.roundtile' ).connect( 'onclick', this, 'selectRound' );
 
 			this.setupNotifications();
             console.log( "Ending game setup" );
@@ -129,7 +131,8 @@ function (dojo, declare) {
                 
                 break;
            */
-           
+            case 'endOfTurn':
+			    dojo.query( '.flipped' ).removeClass( 'flipped' )   ;
            
             case 'dummmy':
                 break;
@@ -215,10 +218,18 @@ function (dojo, declare) {
                 this.format_block('jstpl_squareback', {
                     position: location_arg ,
 					x : xpos,
-					y : ypos  }), 'stile_back_'+location_arg , "replace" );		
+					y : ypos  }), 'stile_back_'+location_arg , "replace" );
 			
-			//dojo.query('#stile_'+location_arg).addClass("visible");
-			
+
+				
+			if (visible) 
+				{
+				dojo.toggleClass('stile_'+location_arg , "visible", true);
+				}		
+			else
+				{
+				dojo.toggleClass('stile_'+location_arg , "flipped", true);
+				}
 		},
 		
 		flipround: function ( location, location_arg, card_id, visible )
@@ -231,10 +242,17 @@ function (dojo, declare) {
                     position: location_arg ,
 					player_id : player_id ,
 					x : xpos,
-					y : ypos  }), 'rtile_back_'+location_arg+'_'+player_id , "replace" );		
+					y : ypos  }), 'rtile_back_'+location_arg+'_'+player_id , "replace" );
+					
 			
-			//dojo.query('#stile_'+location_arg).addClass("visible");
 			
+			if (visible) 
+				{
+				dojo.toggleClass('rtile_'+location_arg+'_'+player_id,"visible", true);	
+				}	
+			else{
+				dojo.toggleClass('rtile_'+location_arg+'_'+player_id,"flipped", true);	
+				}
 		},
 
 
@@ -381,6 +399,20 @@ function (dojo, declare) {
             // dojo.subscribe( 'cardPlayed', this, "notif_cardPlayed" );
             // this.notifqueue.setSynchronous( 'cardPlayed', 3000 );
             // 
+			
+			dojo.subscribe( 'roundVisible', this, "notif_roundVisible" );
+			//this.notifqueue.setSynchronous( 'roundVisible', 2000 );
+			dojo.subscribe( 'squareFliped', this, "notif_squareFliped" );
+           // this.notifqueue.setSynchronous( 'squareFliped', 2000 );
+			dojo.subscribe( 'emptyPackage', this, "notif_emptyPackage");
+          //  this.notifqueue.setSynchronous('emptyPackage', 2000);
+			dojo.subscribe('roundFliped', this, "notif_roundFliped");
+          //  this.notifqueue.setSynchronous('roundFliped', 2000);
+			dojo.subscribe('match', this, "notif_match");
+           // this.notifqueue.setSynchronous('match', 2000);
+			dojo.subscribe('theft', this, "notif_theft");
+           // this.notifqueue.setSynchronous('theft', 2000);
+			
         },  
         
         // TODO: from this point and below, you can write your game notifications handling methods
@@ -397,7 +429,57 @@ function (dojo, declare) {
             
             // TODO: play the card in the user interface.
         },    
-        
+		
         */
+		notif_roundVisible: function( notif )
+        {
+            console.log( 'notif_roundVisible' );
+			console.log( notif );
+			
+			this.flipround ( notif.args.player_id , notif.args.roundselected , notif.args.card_type, true );			
+			
+        },
+		
+		notif_squareFliped: function( notif )
+        {
+            console.log( 'notif_squareFliped' );
+			console.log( notif );
+			
+			this.flipsquare ( notif.args.pos , notif.args.card_type , false );			
+			
+        },
+		
+		notif_roundFliped: function( notif )
+        {
+            console.log( 'notif_roundFliped' );
+			console.log( notif );
+			//debugger;
+			this.flipround ( notif.args.player_id , notif.args.roundselected , notif.args.card_type, false );			
+			
+        },
+		
+		notif_emptyPackage: function( notif )
+        {
+            console.log( 'notif_emptyPackage' );
+			console.log( notif );
+			
+			this.flipsquare (  notif.args.roundselected, notif.args.card_type , true );			
+			
+        },
+		
+		notif_match: function( notif )
+        {
+            console.log( 'notif_match' );
+			console.log( notif );
+			
+			this.flipsquare (  notif.args.squareselected , notif.args.card_type , true );			
+			this.flipround ( notif.args.fieldselected , notif.args.roundselected , notif.args.card_type, true );			
+        },
+		notif_theft: function( notif )
+        {
+            console.log( 'notif_theft' );
+			console.log( notif );
+			
+        },
    });             
 });

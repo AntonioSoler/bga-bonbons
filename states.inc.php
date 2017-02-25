@@ -86,12 +86,12 @@ $machinestates = array(
 	4 => array(
     		"name" => "flipRound",
     		"description" => clienttranslate('${actplayer} can flip a round tile or pass'),
-    		"descriptionmyturn" => clienttranslate('${you} car flip a round tile or pass'),
+    		"descriptionmyturn" => clienttranslate('${you} can flip a round tile or pass'),
     		"type" => "activeplayer",
     		"action" => "stflipRound",
-			"possibleactions" => array( "selectRound", "pass" ),
+			"possibleactions" => array( "selectRound", "selectPass" ),
 			"updateGameProgression" => true,
-    		"transitions" => array( "processRound" => 5 )
+    		"transitions" => array( "processRound" => 5 ,"endOfTurn" => 8 )
     ),
     5 => array(
         "name" => "processRound", 
