@@ -169,13 +169,17 @@ class bonbons extends Table
         $sql = "SELECT player_id id, player_score score FROM player ";
         $result['players'] = self::getCollectionFromDb( $sql );
   
-									// TODO: CHANGE TO VISIBLE!!!!
+									
 		$playerfields= array ();
 		$result['table'] = $this->squares->getCardsInLocation( 'visible' );
 		
 		$sql = "SELECT  card_type type ,card_location location, card_location_arg  location_arg FROM rounds where card_location like 'visible%' ";
         $result['playerfields'] = self::getCollectionFromDb( $sql );
-					
+		
+		$sql = "SELECT card_location location FROM rounds where card_location_arg=5 and card_location != 'deck' ";
+        $result['fifthtile'] = self::getUniqueValueFromDB ( $sql );
+		
+		
         return $result;
     }
 
@@ -245,7 +249,7 @@ class bonbons extends Table
     }
     
     */
-	function selectPass( $pos )
+	function selectPass( )
     {
         // Check that this is the player's turn and that it is a "possible action" at this game state (see states.inc.php)
         self::checkAction( 'selectPass' ); 
@@ -435,9 +439,9 @@ class bonbons extends Table
 		$roundselected=self::getGameStateValue( 'roundselected' );
 		$fieldselected=self::getGameStateValue('fieldselected');
 		
-		$sql = "SELECT card_type from squares where card_location_arg=".$squareselected ;
+		$sql = "SELECT card_type from squares where card_location_arg=$squareselected" ;
         $square_type = self::getUniqueValueFromDb( $sql );
-		$sql = "SELECT card_type from rounds where card_location_arg=".$roundselected ." and card_location like 'hidden".$fieldselected."'";;
+		$sql = "SELECT card_type from rounds where card_location_arg=$roundselected and card_location like 'hidden$fieldselected'";
         $round_type = self::getUniqueValueFromDb( $sql );
 		
         if ( $square_type != $round_type  )
@@ -451,6 +455,7 @@ class bonbons extends Table
 			) );
 			$this->gamestate->nextState( 'endOfTurn' );
 		}
+		
 		else if ( $player_id == $fieldselected )
 		{
 			$sql = "UPDATE rounds SET card_location='visible$player_id' WHERE card_location_arg=$roundselected and card_location like 'hidden$fieldselected'";

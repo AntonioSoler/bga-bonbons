@@ -66,8 +66,8 @@ var jstpl_some_game_item='<div class="my_game_item" id="my_game_item_${id}"></di
 */
 
 
-var jstpl_squareback='<div id="stile_back_${position}" class="squaretile--back" style="background-position: ${x}px ${y}px ;"></div>';
-var jstpl_roundback='<div id="rtile_back_${position}_${player_id}" class="roundtile--back" style="background-position: ${x}px ${y}px ;"></div>';
+
+var jstpl_round='<div id="rtile_5_${p1}" class="roundtile"><div class="roundtile--front"></div><div id="rtile_back_5_${p2}" class="roundtile--back"></div></div>';
 
 </script>  
 

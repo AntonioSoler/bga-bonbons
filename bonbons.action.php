@@ -66,24 +66,24 @@
 	 public function selectSquare()
     {
 		self::setAjaxMode();
-		$arg1 = self::getArg( "pos", AT_posint, true );
-		$this->game->selectSquare($arg1);
+		$pos = self::getArg( "pos", AT_posint, true );
+		$this->game->selectSquare($pos);
 		self::ajaxResponse();    
 	}
 	
 	 public function selectRound()
     {
 		self::setAjaxMode();
-		$arg1 = self::getArg( "pos", AT_posint, true );
-		$arg2 = self::getArg( "field_id", AT_posint, true );
-		$this->game->selectRound($arg1,$arg2);
+		$pos = self::getArg( "pos", AT_posint, true );
+		$field_id = self::getArg( "field_id", AT_posint, true );
+		$this->game->selectRound($pos,$field_id);
 		self::ajaxResponse();    
 	}	
 	
-	 public function pass()
+	 public function selectPass()
     {
 		self::setAjaxMode();
-		$this->game->pass();
+		$this->game->selectPass();
 		self::ajaxResponse();    
 	}
 	

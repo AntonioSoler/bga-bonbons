@@ -99,7 +99,7 @@ $machinestates = array(
         "description" => clienttranslate('a player has flipped a round tile'),
 		"action" => "stprocessRound",
         "updateGameProgression" => true,
-        "transitions" => array("endOfTurn" => 8, "swapRound" => 7  ) 
+        "transitions" => array("endOfTurn" => 8, "swapRound" => 7 , "flipSquare" => 2, ) 
     ),
 	
 	6 => array(

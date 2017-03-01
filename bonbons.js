@@ -77,7 +77,17 @@ function (dojo, declare) {
 			
             // Setup game notifications to handle (see "setupNotifications" method below)
             
-			//debugger;
+			if ( this.gamedatas.fifthtile != null )
+			{
+				debugger;
+				player_id=this.gamedatas.fifthtile.replace(/\D/g,'');
+				dojo.place(
+                this.format_block('jstpl_round', {
+					p1 : player_id ,
+					p2 : player_id }), 'playerField_'+player_id , "last" );
+			}
+			
+			
 			if ( Object.keys(this.gamedatas.table).length >= 1)
 			{
 				for( var i in this.gamedatas.table )
@@ -214,14 +224,10 @@ function (dojo, declare) {
 		{
 			xpos= -100*((card_id - 1 )%4 );
 			ypos= -100*(Math.floor( (card_id -1 ) / 4 ));
-			dojo.place(
-                this.format_block('jstpl_squareback', {
-                    position: location_arg ,
-					x : xpos,
-					y : ypos  }), 'stile_back_'+location_arg , "replace" );
+			position= xpos+"px "+ ypos+"px ";
 			
+			dojo.style('stile_back_'+location_arg , "background-position", position);
 
-				
 			if (visible) 
 				{
 				dojo.toggleClass('stile_'+location_arg , "visible", true);
@@ -234,17 +240,21 @@ function (dojo, declare) {
 		
 		flipround: function ( location, location_arg, card_id, visible )
 		{
+			
 			player_id = location.replace(/\D/g,'');
 			xpos= -100*((card_id - 1 )%4 );
 			ypos= -100*(Math.floor( (card_id -1 ) / 4 ));
-			dojo.place(
+			position= xpos+"px "+ ypos+"px ";
+			/*dojo.place(
                 this.format_block('jstpl_roundback', {
                     position: location_arg ,
 					player_id : player_id ,
 					x : xpos,
 					y : ypos  }), 'rtile_back_'+location_arg+'_'+player_id , "replace" );
-					
+			*/		
+			//dojo.place('<div id="rtile_back_'+location_arg+'_'+player_id+'" class="roundtile--back" style="background-position: '+xpos+'px '+ypos+'px ;"></div>','rtile_back_'+location_arg+'_'+player_id , "replace" );
 			
+			dojo.style('rtile_back_'+location_arg+'_'+player_id , "background-position", position);
 			
 			if (visible) 
 				{
@@ -360,12 +370,12 @@ function (dojo, declare) {
         {
             // Stop this event propagation
             dojo.stopEvent( evt );
-			if( ! this.checkAction( 'pass' ) )
+			if( ! this.checkAction( 'selectPass' ) )
             {   return; }
        
-            if( this.checkAction( 'pass' ) )    // Check that this action is possible at this moment
+            if( this.checkAction( 'selectPass' ) )    // Check that this action is possible at this moment
             {            
-                this.ajaxcall( "/bonbons/bonbons/pass.html", {
+                this.ajaxcall( "/bonbons/bonbons/selectPass.html", {
                     pos:pos
                 }, this, function( result ) {} );
             }            
@@ -401,17 +411,17 @@ function (dojo, declare) {
             // 
 			
 			dojo.subscribe( 'roundVisible', this, "notif_roundVisible" );
-			//this.notifqueue.setSynchronous( 'roundVisible', 2000 );
+			this.notifqueue.setSynchronous( 'roundVisible', 2000 );
 			dojo.subscribe( 'squareFliped', this, "notif_squareFliped" );
-           // this.notifqueue.setSynchronous( 'squareFliped', 2000 );
+            //this.notifqueue.setSynchronous( 'squareFliped', 2000 );
 			dojo.subscribe( 'emptyPackage', this, "notif_emptyPackage");
-          //  this.notifqueue.setSynchronous('emptyPackage', 2000);
+            this.notifqueue.setSynchronous('emptyPackage', 2000);
 			dojo.subscribe('roundFliped', this, "notif_roundFliped");
-          //  this.notifqueue.setSynchronous('roundFliped', 2000);
+            this.notifqueue.setSynchronous('roundFliped', 2000);
 			dojo.subscribe('match', this, "notif_match");
-           // this.notifqueue.setSynchronous('match', 2000);
+            this.notifqueue.setSynchronous('match', 2000);
 			dojo.subscribe('theft', this, "notif_theft");
-           // this.notifqueue.setSynchronous('theft', 2000);
+            this.notifqueue.setSynchronous('theft', 2000);
 			
         },  
         
@@ -453,8 +463,7 @@ function (dojo, declare) {
         {
             console.log( 'notif_roundFliped' );
 			console.log( notif );
-			//debugger;
-			this.flipround ( notif.args.player_id , notif.args.roundselected , notif.args.card_type, false );			
+			this.flipround ( notif.args.fieldselected , notif.args.roundselected , notif.args.card_type, false );			
 			
         },
 		
