@@ -29,7 +29,7 @@
 <div id="tablearea" class="boardtable">
 		<!-- BEGIN tablearea -->
 		<div id="stile_{POSITION}" class="squaretile">
-			<div class="squaretile--front"></div><div id="stile_back_{POSITION}" class="squaretile--back"></div>
+			<div class="squaretile--front" title="{POSITION}"></div><div id="stile_back_{POSITION}" class="squaretile--back"></div>
 		</div>
 		<!-- END tablearea -->
 </div>
@@ -67,7 +67,7 @@ var jstpl_some_game_item='<div class="my_game_item" id="my_game_item_${id}"></di
 
 
 
-var jstpl_round='<div id="rtile_5_${p1}" class="roundtile"><div class="roundtile--front"></div><div id="rtile_back_5_${p2}" class="roundtile--back"></div></div>';
+var jstpl_round='<div id="rtile_${pos1}_${field1}" class="roundtile"><div class="roundtile--front"></div><div id="rtile_back_${pos2}_${field2}" class="roundtile--back"></div></div>';
 
 </script>  
 

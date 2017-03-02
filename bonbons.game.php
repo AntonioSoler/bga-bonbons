@@ -253,7 +253,12 @@ class bonbons extends Table
     {
         // Check that this is the player's turn and that it is a "possible action" at this game state (see states.inc.php)
         self::checkAction( 'selectPass' ); 
-        
+		$player_id = self::getActivePlayerId();
+		$player_name = self::getActivePlayerName();
+        self::notifyAllPlayers( "pass", clienttranslate( '${player_name} passes and does not want to reveal a round tile this turn.' ), array(
+				'player_id' => $player_id,
+				'player_name' => $player_name
+				) );
 		$this->gamestate->nextState( 'endOfTurn' );
           
     }
@@ -289,16 +294,17 @@ class bonbons extends Table
 			
 		if( $state['name'] == 'buyRound' ) 
 			{
-			$sql = "UPDATE rounds SET card_location='visible$player_id' WHERE card_location_arg=$pos and card_location like 'hidden".$field_id."'";
+			$sql = "UPDATE rounds SET card_location='visible$player_id' WHERE card_location_arg=$pos and card_location like 'hidden$field_id'";
 	        self::DbQuery( $sql ); 
 			self::DbQuery( "UPDATE player SET player_score=player_score+1 WHERE player_id='$player_id'" );
-			self::notifyAllPlayers( "roundVisible", clienttranslate( '${player_name} has revealed a round token for findind three money tiles.' ), array(
+			self::notifyAllPlayers( "roundVisible", clienttranslate( '${player_name} has revealed a round token for free after finding three money tiles.' ), array(
 				'player_id' => $player_id,
 				'player_name' => self::getActivePlayerName(),
-				'pos' => $pos,
+				'roundselected' => $pos,
+				'fieldselected' => $player_id,
 				'card_type' => $card_type
 				) );
-			self::setGameStateInitialValue( 'moneytiles', 0 );
+			
 			$this->gamestate->nextState( 'endOfTurn' );
 			}
 			
@@ -307,10 +313,19 @@ class bonbons extends Table
 			$roundselected=self::getGameStateValue( 'roundselected' );
 		    $fieldselected=self::getGameStateValue('fieldselected');	
 			
-		    $sql = "UPDATE rounds SET card_location='visible$player_id' , card_location_arg=$pos WHERE card_location_arg=$roundselected and card_location like 'hidden$fieldselected'";
-	        self::DbQuery( $sql );
-			$sql = "UPDATE rounds SET card_location_arg='hidden$fieldselected' , card_location_arg=$roundselected WHERE card_location_arg=$pos and card_location like 'hidden".$field_id."'";
-	        self::DbQuery( $sql ); 
+		    $sql = "UPDATE rounds SET card_location='visible$field_id' , card_location_arg=$pos WHERE card_location_arg=$roundselected and card_location like 'hidden$fieldselected'";
+	        self::DbQuery( $sql );   //make visible the round tile
+			$sql = "UPDATE rounds SET card_location='hidden$fieldselected' , card_location_arg=$roundselected WHERE card_location_arg=$pos and card_location like 'hidden$field_id'";
+	        self::DbQuery( $sql );   //give the selected tile to other player
+			
+			self::notifyAllPlayers( "swapround", clienttranslate( '${player_name} has exchanged a round tile after finding a match from other player tiles.' ), array(
+				'player_id' => $player_id,
+				'player_name' => self::getActivePlayerName(),
+				'pos' => $pos,
+				'field_id' => $field_id,
+				'roundselected' => $roundselected,
+				'fieldselected' => $fieldselected
+				) );
 	         			
 			$this->gamestate->nextState( 'endOfTurn' );
 			}
@@ -360,6 +375,7 @@ class bonbons extends Table
 */    
 		function stflipSquare()
     {
+		//wait for the player to flip a square tile
 	}
 	
 		function stendofturn()
@@ -372,7 +388,7 @@ class bonbons extends Table
 		{
 			$this->gamestate->nextState( 'gameEnd' );
 		}
-		else if (self::getGameStateValue('moneytiles') == 0) 
+		else 
 		{   
 			self::activeNextPlayer();
 			$this->gamestate->nextState( 'flipSquare' );
@@ -388,27 +404,56 @@ class bonbons extends Table
 		$squareselected=self::getGameStateValue( 'squareselected');
 		$sql = "SELECT card_type from squares where card_location_arg=".$squareselected ;
         $card_type = self::getUniqueValueFromDb( $sql );
+		
 		if ( $card_type <= 32 )
 		{
+			$moneytiles=self::getGameStateValue( 'moneytiles');
 			self::notifyAllPlayers( "squareFliped", clienttranslate( '${player_name} fliped a square tile.' ), array(
 				'player_id' => $player_id,
 				'player_name' => self::getActivePlayerName(),
 				'pos' => $squareselected,
-				'card_type' => $card_type
+				'card_type' => $card_type,
+				'moneytiles' => $moneytiles,
+				'ismoney'  => false
 			) );
 			$this->gamestate->nextState( 'flipRound' );
 		}
 		else if ( $card_type == 33 )
 		{
 			self::incGameStateValue( 'moneytiles', 1 );
-		
-			self::notifyAllPlayers( "squareFliped", clienttranslate( '${player_name} found a money tile and can flip another square tile.' ), array(
+		    
+			$moneytiles=self::getGameStateValue( 'moneytiles');
+			
+			if ( $moneytiles >= 3 ) 
+				{ 
+				self::notifyAllPlayers( "squareFliped", clienttranslate( '${player_name} found 3 money tiles !!! and can flip a round tile for free' ), array(
 				'player_id' => $player_id,
 				'player_name' => self::getActivePlayerName(),
 				'pos' => $squareselected,
-				'card_type' => $card_type
-			) );
-			$this->gamestate->nextState( 'flipSquare' );
+				'card_type' => $card_type,
+				'moneytiles' => $moneytiles,
+				'ismoney'  => true
+				) );
+				
+				
+				$sql = "UPDATE squares SET card_location='visible' WHERE card_type=33";
+	            self::DbQuery( $sql ); // 
+				$this->gamestate->nextState( 'buyRound' );
+				}
+			
+			
+			else 
+				{ 
+				self::notifyAllPlayers( "squareFliped", clienttranslate( '${player_name} found a money tile and can flip another square tile. ${moneytiles}'), array(
+				'player_id' => $player_id,
+				'player_name' => self::getActivePlayerName(),
+				'pos' => $squareselected,
+				'card_type' => $card_type,
+				'moneytiles' => $moneytiles,
+				'ismoney'  => true
+				) );
+				$this->gamestate->nextState( 'flipSquare' );
+				}
 		} 
 		else if ( $card_type == 34 )
 		{
@@ -473,7 +518,7 @@ class bonbons extends Table
 				'card_type' => $round_type
 			) );
 			
-			$this->gamestate->nextState( 'flipSquare' );
+			$this->gamestate->nextState( 'endOfTurn' );
 		}
 		
 		else if ( $player_id != $fieldselected )
@@ -483,10 +528,11 @@ class bonbons extends Table
 	        self::DbQuery( $sql ); 
 			self::DbQuery( "UPDATE player SET player_score=player_score+1 WHERE player_id='$player_id'" );
 			
-			self::notifyAllPlayers( "theft", clienttranslate( "${player_name} found a match on other player's field. Now ${player_name} can give one round tile to this player in exchange." ), array(
+			self::notifyAllPlayers( "theft", clienttranslate( '${player_name} found a match of other player. Now this player can give one round tile to this player in exchange.' ), array(
 				'player_id' => $player_id,
 				'player_name' => self::getActivePlayerName(),
 				'roundselected' => $roundselected,
+				'squareselected' => $squareselected,
 				'fieldselected' => $fieldselected,
 				'card_type' => $round_type
 			) );
@@ -499,13 +545,13 @@ class bonbons extends Table
 	//////////////////////////////////////////////////////////////////////////////////////////////////
      function stbuyround()
     {
-        self::setGameStateValue( 'moneytiles', 0 );
+        
     }    
    
    //////////////////////////////////////////////////////////////////////////////////////////////////
        function stswapRound()
     {
-        self::setGameStateValue( 'moneytiles', 0 );
+        
     }    
    
    

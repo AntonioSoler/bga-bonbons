@@ -79,12 +79,14 @@ function (dojo, declare) {
             
 			if ( this.gamedatas.fifthtile != null )
 			{
-				debugger;
+				//debugger;
 				player_id=this.gamedatas.fifthtile.replace(/\D/g,'');
 				dojo.place(
                 this.format_block('jstpl_round', {
-					p1 : player_id ,
-					p2 : player_id }), 'playerField_'+player_id , "last" );
+					field1 : player_id ,
+					field2 : player_id ,
+                    pos1:	5 ,
+					pos2:   5  }), 'playerField_'+player_id , "last" );
 			}
 			
 			
@@ -111,8 +113,12 @@ function (dojo, declare) {
 			dojo.query('.squaretile').onclick( function(evt) { 
 			dojo.toggleClass(this, 'flipped');
 			});*/
-			 dojo.query( '.squaretile' ).connect( 'onclick', this, 'selectSquare' );
-			 dojo.query( '.roundtile' ).connect( 'onclick', this, 'selectRound' );
+			
+			dojo.query( '.squaretile' ).connect( 'onclick', this, 'selectSquare' );
+			dojo.query( '.roundtile' ).connect( 'onclick', this, 'selectRound' );
+			 
+			this.addTooltipToClass( "roundtile", _( "Round tile" ), "" );
+			this.addTooltipToClass( "squaretile", _( "Square tile" ), "" );
 
 			this.setupNotifications();
             console.log( "Ending game setup" );
@@ -326,12 +332,18 @@ function (dojo, declare) {
             var pos = coords[1];
             var field_id = coords[2];
 
-            if( dojo.hasClass( 'rtile_'+pos+'_'+field_id ,'visible' ) || dojo.hasClass( 'rtile_'+pos+'_'+field_id ,'flipped' ))
+            if( dojo.hasClass( 'rtile_'+pos+'_'+field_id ,'visible' ) || dojo.hasClass( 'rtile_'+pos+'_'+field_id ,'flipped' )  )
             {
                 // This is not a possible move => the click does nothing
                 return ;
             }
             
+			if(( this.gamedatas.gamestate.name=="swapRound" || this.gamedatas.gamestate.name=="buyRound" )&& (field_id != this.gamedatas.gamestate.active_player))
+            {
+                this.showMessage  ( _("You have to select one of YOUR round tiles..."), "info") // This is not a possible move => the click does nothing
+                return ;
+            }
+			
             if( this.checkAction( 'selectRound' ) )    // Check that this action is possible at this moment
             {            
                 this.ajaxcall( "/bonbons/bonbons/selectRound.html", {
@@ -422,6 +434,10 @@ function (dojo, declare) {
             this.notifqueue.setSynchronous('match', 2000);
 			dojo.subscribe('theft', this, "notif_theft");
             this.notifqueue.setSynchronous('theft', 2000);
+			dojo.subscribe('pass', this, "notif_pass");
+            this.notifqueue.setSynchronous('pass', 2000);
+			dojo.subscribe('swapround', this, "notif_swapround");
+            this.notifqueue.setSynchronous('swapround', 2000);
 			
         },  
         
@@ -439,43 +455,68 @@ function (dojo, declare) {
             
             // TODO: play the card in the user interface.
         },    
-		
         */
+		
 		notif_roundVisible: function( notif )
         {
             console.log( 'notif_roundVisible' );
 			console.log( notif );
 			
 			this.flipround ( notif.args.player_id , notif.args.roundselected , notif.args.card_type, true );			
-			
         },
-		
+///////////////////////////////////////////////////				
+		notif_pass: function( notif )
+        {
+            console.log( 'notif_pass' );
+			console.log( notif );
+			
+	    },
+///////////////////////////////////////////////////		
 		notif_squareFliped: function( notif )
         {
             console.log( 'notif_squareFliped' );
 			console.log( notif );
 			
-			this.flipsquare ( notif.args.pos , notif.args.card_type , false );			
+			this.flipsquare ( notif.args.pos , notif.args.card_type , false );
+			if ( notif.args.ismoney )
+			{
+				dojo.addClass("stile_"+notif.args.pos ,"moneytile");
+			}
+			if ( notif.args.moneytiles==3 )
+			{
+				dojo.query(".moneytile").addClass("visible");
+			}
+			 
 			
         },
-		
+///////////////////////////////////////////////////		
 		notif_roundFliped: function( notif )
         {
             console.log( 'notif_roundFliped' );
 			console.log( notif );
 			this.flipround ( notif.args.fieldselected , notif.args.roundselected , notif.args.card_type, false );			
-			
-        },
-		
+	    },
+///////////////////////////////////////////////////		
 		notif_emptyPackage: function( notif )
         {
             console.log( 'notif_emptyPackage' );
 			console.log( notif );
 			
-			this.flipsquare (  notif.args.roundselected, notif.args.card_type , true );			
+			this.flipsquare (  notif.args.pos, notif.args.card_type , true );
 			
-        },
-		
+			player_id=notif.args.player_id;
+			
+			dojo.place(
+                this.format_block('jstpl_round', {
+					field1 : player_id ,
+					field2 : player_id ,
+                    pos1:	5 ,
+					pos2:   5 
+					}), 'playerField_'+player_id , "last" );
+					
+			dojo.query( '.roundtile' ).connect( 'onclick', this, 'selectRound' );
+		},
+///////////////////////////////////////////////////		
 		notif_match: function( notif )
         {
             console.log( 'notif_match' );
@@ -484,10 +525,34 @@ function (dojo, declare) {
 			this.flipsquare (  notif.args.squareselected , notif.args.card_type , true );			
 			this.flipround ( notif.args.fieldselected , notif.args.roundselected , notif.args.card_type, true );			
         },
+///////////////////////////////////////////////////		
 		notif_theft: function( notif )
         {
             console.log( 'notif_theft' );
 			console.log( notif );
+		this.flipsquare (  notif.args.squareselected , notif.args.card_type , true );			
+		this.flipround ( notif.args.fieldselected , notif.args.roundselected , notif.args.card_type, false );	
+			
+        },
+///////////////////////////////////////////////////		
+		notif_swapround: function( notif )
+        {
+            console.log( 'notif_theft' );
+			console.log( notif );
+		
+		dojo.removeClass('rtile_'+notif.args.roundselected+'_'+notif.args.fieldselected,"flipped")
+		
+		this.slideTemporaryObject( '<div class="roundtile--front"></div>', 'page-content', 
+		'rtile_'+notif.args.pos+'_'+notif.args.field_id , 
+		'rtile_'+notif.args.roundselected+'_'+notif.args.fieldselected , 500 , 0 );
+		
+		this.slideTemporaryObject( '<div class="roundtile--front"></div>', 'page-content', 
+		'rtile_'+notif.args.roundselected+'_'+notif.args.fieldselected,
+		'rtile_'+notif.args.pos+'_'+notif.args.field_id , 500 , 0 );
+		
+		thisstyle=dojo.attr('rtile_back_'+notif.args.roundselected+'_'+notif.args.fieldselected, "style");
+		dojo.attr('rtile_back_'+notif.args.pos+'_'+notif.args.field_id, "style" ,thisstyle);
+		dojo.toggleClass('rtile_'+notif.args.pos+'_'+notif.args.field_id, "visible" );
 			
         },
    });             
