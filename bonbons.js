@@ -486,8 +486,6 @@ function (dojo, declare) {
 			{
 				dojo.query(".moneytile").addClass("visible");
 			}
-			 
-			
         },
 ///////////////////////////////////////////////////		
 		notif_roundFliped: function( notif )
