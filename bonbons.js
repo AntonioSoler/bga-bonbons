@@ -251,15 +251,7 @@ function (dojo, declare) {
 			xpos= -100*((card_id - 1 )%4 );
 			ypos= -100*(Math.floor( (card_id -1 ) / 4 ));
 			position= xpos+"px "+ ypos+"px ";
-			/*dojo.place(
-                this.format_block('jstpl_roundback', {
-                    position: location_arg ,
-					player_id : player_id ,
-					x : xpos,
-					y : ypos  }), 'rtile_back_'+location_arg+'_'+player_id , "replace" );
-			*/		
-			//dojo.place('<div id="rtile_back_'+location_arg+'_'+player_id+'" class="roundtile--back" style="background-position: '+xpos+'px '+ypos+'px ;"></div>','rtile_back_'+location_arg+'_'+player_id , "replace" );
-			
+		
 			dojo.style('rtile_back_'+location_arg+'_'+player_id , "background-position", position);
 			
 			if (visible) 
