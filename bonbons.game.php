@@ -375,6 +375,8 @@ class bonbons extends Table
 */    
 		function stflipSquare()
     {
+		$player_id = self::getActivePlayerId();
+		self::giveExtraTime($player_id);
 		//wait for the player to flip a square tile
 	}
 	
